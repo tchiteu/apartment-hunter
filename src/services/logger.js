@@ -10,7 +10,7 @@ function loadLogs() {
       return JSON.parse(fs.readFileSync(LOGS_FILE, 'utf8'));
     }
   } catch (err) {
-    console.log('Erro ao ler arquivo de logs:', err.message);
+    console.log('Error reading logs:', err.message);
   }
   return [];
 }
@@ -23,8 +23,8 @@ function saveLogs(logs) {
 function log(message, level = 'info', data = null) {
   const now = new Date();
   const timestamp = now.toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
-
   const levelIcon = { info: 'ℹ️', warn: '⚠️', error: '❌', success: '✅' };
+
   console.log(`[${timestamp}] ${levelIcon[level] || ''} ${message}`);
 
   const logs = loadLogs();
@@ -33,7 +33,7 @@ function log(message, level = 'info', data = null) {
     timestampLocal: timestamp,
     level,
     message,
-    ...(data && { data }),
+    ...(data && { data })
   };
 
   logs.push(logEntry);
