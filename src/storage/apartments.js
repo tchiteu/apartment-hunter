@@ -9,7 +9,7 @@ function load() {
       return JSON.parse(fs.readFileSync(APTS_FILE, 'utf8'));
     }
   } catch (err) {
-    console.log('Erro ao ler arquivo de apartamentos:', err.message);
+    console.log('Error reading apartments file:', err.message);
   }
   return { lastCheckIndex: 0, apartments: [] };
 }
@@ -24,7 +24,6 @@ function getSeenIds(data) {
 
 function filterByLocation(apartments) {
   const locationFilter = config.olx.locationFilter;
-
   return apartments.filter(apt =>
     locationFilter.some(location =>
       apt.location.toLowerCase().includes(location.toLowerCase())
@@ -38,7 +37,7 @@ function addNewApartments(data, newApartments, checkIndex) {
   const apartmentsWithMeta = newApartments.map(apt => ({
     ...apt,
     checkIndex,
-    checkTimestamp,
+    checkTimestamp
   }));
 
   data.lastCheckIndex = checkIndex;
@@ -60,5 +59,5 @@ module.exports = {
   getSeenIds,
   filterByLocation,
   addNewApartments,
-  updateCheckIndex,
+  updateCheckIndex
 };
