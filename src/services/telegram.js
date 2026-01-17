@@ -15,15 +15,15 @@ async function sendMessage(message, disablePreview = true) {
           chat_id: chatId,
           text: message,
           parse_mode: 'Markdown',
-          disable_web_page_preview: disablePreview,
-        }),
+          disable_web_page_preview: disablePreview
+        })
       });
 
       if (!response.ok) {
-        log(`Erro ao enviar para chat ${chatId}`, 'error', { response: await response.text() });
+        log(`Error sending to chat ${chatId}`, 'error', { response: await response.text() });
       }
     } catch (err) {
-      log(`Erro ao enviar notificação Telegram para ${chatId}`, 'error', { error: err.message });
+      log(`Error sending Telegram notification to ${chatId}`, 'error', { error: err.message });
     }
   }
 }
@@ -61,5 +61,5 @@ module.exports = {
   sendMessage,
   notifyNewApartment,
   notifySummary,
-  notifyError,
+  notifyError
 };
