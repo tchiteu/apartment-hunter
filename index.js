@@ -5,19 +5,16 @@ puppeteer.use(StealthPlugin());
 const cron = require('node-cron');
 const fs = require('fs');
 
-// Arquivos de dados
 const APTS_FILE = './apts.json';
 const LOGS_FILE = './logs.json';
 const MAX_LOGS = 500;
 
-// Variáveis de ambiente
 const OLX_URL = process.env.OLX_URL;
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const TELEGRAM_CHAT_IDS = process.env.TELEGRAM_CHAT_IDS?.split(',') || [];
 const CRON_INTERVAL_HOURS = parseInt(process.env.CRON_INTERVAL_HOURS) || 1;
 const LOCATION_FILTER = process.env.LOCATION_FILTER?.split(',') || [];
 
-// Validação das variáveis de ambiente
 function validateEnv() {
   const required = ['OLX_URL', 'TELEGRAM_BOT_TOKEN', 'TELEGRAM_CHAT_IDS'];
   const missing = required.filter(key => !process.env[key]);
@@ -75,7 +72,6 @@ function loadLogs() {
 }
 
 function saveLogs(logs) {
-  // Mantém apenas os últimos MAX_LOGS registros
   const trimmedLogs = logs.slice(-MAX_LOGS);
   fs.writeFileSync(LOGS_FILE, JSON.stringify(trimmedLogs, null, 2));
 }
@@ -84,11 +80,9 @@ function log(message, level = 'info', data = null) {
   const now = new Date();
   const timestamp = now.toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
 
-  // Log no console
   const levelIcon = { info: 'ℹ️', warn: '⚠️', error: '❌', success: '✅' };
   console.log(`[${timestamp}] ${levelIcon[level] || ''} ${message}`);
 
-  // Salvar no arquivo
   const logs = loadLogs();
   const logEntry = {
     timestamp: now.toISOString(),
