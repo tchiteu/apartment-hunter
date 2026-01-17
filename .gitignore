@@ -1,0 +1,20 @@
+# Dependencies
+node_modules/
+
+# Environment
+.env
+
+# Data files
+data/
+apts.json
+logs.json
+
+# Debug
+debug.png
+
+# OS
+.DS_Store
+
+# Logs
+*.log
+npm-debug.log*
