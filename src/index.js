@@ -9,6 +9,6 @@ checkNewApartments();
 const cronExpression = `0 */${config.cron.intervalHours} * * *`;
 cron.schedule(cronExpression, checkNewApartments);
 
-log(`Cron configurado para rodar a cada ${config.cron.intervalHours} hora(s)`, 'info', {
-  intervalHours: config.cron.intervalHours,
+log(`Cron scheduled to run every ${config.cron.intervalHours} hour(s)`, 'info', {
+  intervalHours: config.cron.intervalHours
 });
