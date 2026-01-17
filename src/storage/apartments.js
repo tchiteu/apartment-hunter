@@ -1,7 +1,15 @@
 const fs = require('fs');
+const path = require('path');
 const { config } = require('../config/env');
 
 const APTS_FILE = config.paths.apartments;
+
+function ensureDirectoryExists(filePath) {
+  const dir = path.dirname(filePath);
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+}
 
 function load() {
   try {
@@ -15,6 +23,7 @@ function load() {
 }
 
 function save(data) {
+  ensureDirectoryExists(APTS_FILE);
   fs.writeFileSync(APTS_FILE, JSON.stringify(data, null, 2));
 }
 

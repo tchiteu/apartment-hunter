@@ -1,8 +1,16 @@
 const fs = require('fs');
+const path = require('path');
 const { config } = require('../config/env');
 
 const LOGS_FILE = config.paths.logs;
 const MAX_LOGS = config.logs.maxEntries;
+
+function ensureDirectoryExists(filePath) {
+  const dir = path.dirname(filePath);
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+}
 
 function loadLogs() {
   try {
@@ -16,6 +24,7 @@ function loadLogs() {
 }
 
 function saveLogs(logs) {
+  ensureDirectoryExists(LOGS_FILE);
   const trimmedLogs = logs.slice(-MAX_LOGS);
   fs.writeFileSync(LOGS_FILE, JSON.stringify(trimmedLogs, null, 2));
 }
