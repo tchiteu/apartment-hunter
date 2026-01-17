@@ -15,13 +15,13 @@ function getNextCheckTime() {
 
 async function scrapeOLX(page) {
   return page.evaluate(() => {
-    return Array.from(document.querySelectorAll('.olx-adcard__content')).map(cardElement => {
-      const title = cardElement.querySelector('.olx-adcard__title')?.innerText || '';
-      const price = cardElement.querySelector('.olx-adcard__price')?.innerText || '';
-      const link = cardElement.querySelector('a')?.href || '';
-      const location = cardElement.querySelector('.olx-adcard__location')?.innerText || '';
-      const dirtyMetters = cardElement.querySelector('.olx-adcard__details')?.innerText || '';
-      const mettersMatch = dirtyMetters.match(/(\d+)\s*m²/);
+    return Array.from(document.querySelectorAll('.olx-adcard__content')).map(card => {
+      const title = card.querySelector('.olx-adcard__title')?.innerText || '';
+      const price = card.querySelector('.olx-adcard__price')?.innerText || '';
+      const link = card.querySelector('a')?.href || '';
+      const location = card.querySelector('.olx-adcard__location')?.innerText || '';
+      const details = card.querySelector('.olx-adcard__details')?.innerText || '';
+      const mettersMatch = details.match(/(\d+)\s*m²/);
       const metters = mettersMatch ? parseInt(mettersMatch[1]) : null;
 
       return { id: link, title, price, location, link, metters };
@@ -30,7 +30,7 @@ async function scrapeOLX(page) {
 }
 
 async function checkNewApartments() {
-  log('Iniciando verificação de apartamentos...', 'info');
+  log('Starting apartment check...', 'info');
 
   const browser = await puppeteer.launch({
     headless: true,
@@ -38,8 +38,8 @@ async function checkNewApartments() {
       '--no-sandbox',
       '--disable-setuid-sandbox',
       '--disable-blink-features=AutomationControlled',
-      '--window-size=1920,1080',
-    ],
+      '--window-size=1920,1080'
+    ]
   });
 
   const page = await browser.newPage();
@@ -50,19 +50,17 @@ async function checkNewApartments() {
 
   try {
     await page.goto(config.olx.url, { waitUntil: 'networkidle2' });
-
     await page.waitForSelector('.olx-adcard__content', { timeout: 10000 }).catch(() => {
-      log('Seletor .olx-adcard__content não encontrado', 'warn');
+      log('Selector .olx-adcard__content not found', 'warn');
     });
 
     await page.screenshot({ path: 'debug.png', fullPage: true });
-    log('Screenshot salvo em debug.png', 'info');
 
     const allApartments = await scrapeOLX(page);
-    log(`Total encontrado: ${allApartments.length} apartamentos`, 'info', { total: allApartments.length });
+    log(`Found ${allApartments.length} apartments`, 'info', { total: allApartments.length });
 
     const filteredApartments = apartments.filterByLocation(allApartments);
-    log(`Após filtro de bairros: ${filteredApartments.length} apartamentos`, 'info', { filtered: filteredApartments.length });
+    log(`After location filter: ${filteredApartments.length}`, 'info', { filtered: filteredApartments.length });
 
     const data = apartments.load();
     const seenIds = apartments.getSeenIds(data);
@@ -72,10 +70,10 @@ async function checkNewApartments() {
     const checkIndex = data.lastCheckIndex + 1;
 
     if (newApartments.length > 0) {
-      log(`${newApartments.length} novos apartamentos encontrados!`, 'success', {
+      log(`${newApartments.length} new apartments found!`, 'success', {
         checkIndex,
         newCount: newApartments.length,
-        apartments: newApartments.map(a => ({ title: a.title, price: a.price, location: a.location })),
+        apartments: newApartments.map(a => ({ title: a.title, price: a.price, location: a.location }))
       });
 
       for (const apt of newApartments) {
@@ -84,10 +82,10 @@ async function checkNewApartments() {
 
       apartments.addNewApartments(data, newApartments, checkIndex);
     } else {
-      log('Nenhum apartamento novo encontrado', 'info', {
+      log('No new apartments found', 'info', {
         checkIndex,
         total: allApartments.length,
-        filtered: filteredApartments.length,
+        filtered: filteredApartments.length
       });
       apartments.updateCheckIndex(data, checkIndex);
     }
@@ -100,9 +98,9 @@ async function checkNewApartments() {
       nextCheck
     );
 
-    log(`Verificação #${checkIndex} concluída. Próxima: ${nextCheck}`, 'success', { checkIndex, nextCheck });
+    log(`Check #${checkIndex} completed. Next: ${nextCheck}`, 'success', { checkIndex, nextCheck });
   } catch (err) {
-    log(`Erro durante verificação: ${err.message}`, 'error', { error: err.message, stack: err.stack });
+    log(`Error during check: ${err.message}`, 'error', { error: err.message, stack: err.stack });
     await telegram.notifyError(err.message);
   } finally {
     await browser.close();
