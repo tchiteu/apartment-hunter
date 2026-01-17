@@ -38,6 +38,11 @@ async function checkNewApartments() {
       '--no-sandbox',
       '--disable-setuid-sandbox',
       '--disable-blink-features=AutomationControlled',
+      '--disable-dev-shm-usage',
+      '--disable-gpu',
+      '--disable-extensions',
+      '--single-process',
+      '--no-zygote',
       '--window-size=1920,1080'
     ]
   });
@@ -49,7 +54,7 @@ async function checkNewApartments() {
   );
 
   try {
-    await page.goto(config.olx.url, { waitUntil: 'networkidle2' });
+    await page.goto(config.olx.url, { waitUntil: 'networkidle2', timeout: 60000 });
     await page.waitForSelector('.olx-adcard__content', { timeout: 10000 }).catch(() => {
       log('Selector .olx-adcard__content not found', 'warn');
     });
