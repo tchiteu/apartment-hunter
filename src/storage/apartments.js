@@ -1,30 +1,14 @@
-const fs = require('fs');
-const path = require('path');
 const { config } = require('../config/env');
+const { loadJSON, saveJSON } = require('../utils/fs');
 
 const APTS_FILE = config.paths.apartments;
 
-function ensureDirectoryExists(filePath) {
-  const dir = path.dirname(filePath);
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
-  }
-}
-
 function load() {
-  try {
-    if (fs.existsSync(APTS_FILE)) {
-      return JSON.parse(fs.readFileSync(APTS_FILE, 'utf8'));
-    }
-  } catch (err) {
-    console.log('Error reading apartments file:', err.message);
-  }
-  return { lastCheckIndex: 0, apartments: [] };
+  return loadJSON(APTS_FILE, { lastCheckIndex: 0, apartments: [] });
 }
 
 function save(data) {
-  ensureDirectoryExists(APTS_FILE);
-  fs.writeFileSync(APTS_FILE, JSON.stringify(data, null, 2));
+  saveJSON(APTS_FILE, data);
 }
 
 function getSeenIds(data) {
