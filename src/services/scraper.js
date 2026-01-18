@@ -95,14 +95,6 @@ async function checkNewApartments() {
       apartments.updateCheckIndex(data, checkIndex);
     }
 
-    await telegram.notifySummary(
-      checkIndex,
-      allApartments.length,
-      filteredApartments.length,
-      newApartments.length,
-      nextCheck
-    );
-
     log(`Check #${checkIndex} completed. Next: ${nextCheck}`, 'success', { checkIndex, nextCheck });
   } catch (err) {
     log(`Error during check: ${err.message}`, 'error', { error: err.message, stack: err.stack });
