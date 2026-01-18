@@ -1,32 +1,16 @@
-const fs = require('fs');
-const path = require('path');
 const { config } = require('../config/env');
+const { loadJSON, saveJSON } = require('../utils/fs');
 
 const LOGS_FILE = config.paths.logs;
 const MAX_LOGS = config.logs.maxEntries;
 
-function ensureDirectoryExists(filePath) {
-  const dir = path.dirname(filePath);
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
-  }
-}
-
 function loadLogs() {
-  try {
-    if (fs.existsSync(LOGS_FILE)) {
-      return JSON.parse(fs.readFileSync(LOGS_FILE, 'utf8'));
-    }
-  } catch (err) {
-    console.log('Error reading logs:', err.message);
-  }
-  return [];
+  return loadJSON(LOGS_FILE, []);
 }
 
 function saveLogs(logs) {
-  ensureDirectoryExists(LOGS_FILE);
   const trimmedLogs = logs.slice(-MAX_LOGS);
-  fs.writeFileSync(LOGS_FILE, JSON.stringify(trimmedLogs, null, 2));
+  saveJSON(LOGS_FILE, trimmedLogs);
 }
 
 function log(message, level = 'info', data = null) {
