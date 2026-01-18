@@ -216,31 +216,11 @@ async function checkNewApartments() {
       data.lastCheckIndex = checkIndex;
       data.apartments = [...data.apartments, ...newApartmentsWithMeta];
       saveApartmentsData(data);
-
-      const summaryMessage = `✅ *Verificação #${checkIndex} concluída*
-
-🔍 Total encontrado: ${apartments.length}
-📍 Nos bairros filtrados: ${filteredApartments.length}
-🆕 Novos: ${newApartments.length}
-
-⏰ Próxima verificação: ${nextCheck}`;
-
-      await sendTelegramMessage(summaryMessage);
     } else {
       log('Nenhum apartamento novo encontrado', 'info', { checkIndex, total: apartments.length, filtered: filteredApartments.length });
 
       data.lastCheckIndex = checkIndex;
       saveApartmentsData(data);
-
-      const summaryMessage = `✅ *Verificação #${checkIndex} concluída*
-
-🔍 Total encontrado: ${apartments.length}
-📍 Nos bairros filtrados: ${filteredApartments.length}
-🆕 Novos: 0
-
-⏰ Próxima verificação: ${nextCheck}`;
-
-      await sendTelegramMessage(summaryMessage);
     }
 
     log(`Verificação #${checkIndex} concluída. Próxima: ${nextCheck}`, 'success', { checkIndex, nextCheck });
