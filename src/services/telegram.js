@@ -41,25 +41,11 @@ async function notifyNewApartment(apt) {
   await sendMessage(message, false);
 }
 
-async function notifySummary(checkIndex, total, filtered, newCount, nextCheck) {
-  const message = `✅ *Verificação #${checkIndex} concluída*
-
-🔍 Total encontrado: ${total}
-📍 Nos bairros filtrados: ${filtered}
-🆕 Novos: ${newCount}
-
-⏰ Próxima verificação: ${nextCheck}`;
-
-  await sendMessage(message);
-}
-
 async function notifyError(errorMessage) {
   await sendMessage(`❌ *Erro na verificação*\n\n${errorMessage}`);
 }
 
 module.exports = {
-  sendMessage,
   notifyNewApartment,
-  notifySummary,
   notifyError
 };
